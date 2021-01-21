@@ -25,7 +25,11 @@ const publicDirectoryPath = path.join(__dirname, '../public')
 app.set('view engine', 'hbs')
 
 //Tells express where to find views with custom path
+//By default if not provided with path it'll look for directory named views
 app.set('views', viewsPath)
+
+//Set the partials path in handlebars
+hbs.registerPartials(partialsPath)
 
 //customize server to serve static page
 app.use(express.static(publicDirectoryPath))
@@ -84,7 +88,11 @@ app.get('/about', (req,res) => {
 app.get('/help', (req,res) => {
     res.render('help', {
         
-        helptext: 'This is some helpful text'
+        helptext: 'This is some helpful text',
+
+        //Passed for the header rendered
+        title: 'Help',
+        name: 'Sachin'
     })
 })
 // app.com/weather
@@ -96,6 +104,30 @@ app.get('/weather', (req, res) => {
         location: "Philadelphia"
     })
 
+})
+
+//Setting up 404 page for invalid requests or routes that are not set up
+//Included in the end as regex '*' matches all strings
+
+//This page throes 404 for pages not inside help
+//Help specific 404
+app.get('/help/*',(req,res) => {
+
+    res.render('404',{
+        title: '404 help',
+        name: 'Sachin',
+        errrorMessage:'Help article not found'
+    })
+})
+
+//Generic 404
+app.get('*',(req,res) => {
+
+    res.render('404',{
+        title: '404',
+        name: 'Sachin',
+        errrorMessage:'Page not found'
+    })
 })
 //Starts server
 //callback function after server runs
